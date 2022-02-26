@@ -35,15 +35,47 @@ multi_level_model_intercepts <- lmer(y ~ 1 + x + (x|subject), stroop_d)
 # 3 
 # load the data
 library(readr)
+install.packages("factoextra")
+library(factoextra)
 spotify_cleaned <- read_csv("spotify_cleaned.csv")
 
 # examine the data
 summary(spotify_cleaned)
 
-spotify_for_prc <- select(spotify_cleaned, -"Track Name", -"Artist",-"Streams", -"key", -"mode", -"time_signature", -"duration_sec")
-prc_spotify <- prcomp(spotify_for_prc)
-summary(prc_spotify)
+# we still need to clear out some data that is not pertinent to the actual characteristics of the songs
+# the data that will be omitted in the PCA are the column number, that is reduntant as r keeps track of that anyway
+# the track name, the artist and the number of streams
+spotify_for_pca <- select(spotify_cleaned, - "...1", -"Track Name", -"Artist",-"Streams")
+pca_spotify <- prcomp(spotify_for_pca)
+summary(pca_spotify)
+factoextra::fviz_eig(pca_spotify)
+# we can see that we replicated the PCA results from the initial analysis of Pratham Nawal
+# PC1 explains 64% of the data, and PC2 explains 35% of the data.
 
-spotify_for_prc_2 <- select(spotify_cleaned, -"Track Name", -"Artist",-"Streams", -"time_signature",-"duration_sec")
-prc_spotify_2 <- prcomp(spotify_for_prc_2)
-summary(prc_spotify_2)
+fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5)
+cor(spotify_for_pca)
+
+
+#but what happens if we scale it?
+pca_spotify_scaled <- prcomp(spotify_for_pca, scale = TRUE)
+summary(pca_spotify_scaled)
+factoextra::fviz_eig(pca_spotify_scaled)
+fviz_contrib(pca_spotify_scaled, choice="var", axes = 1)
+fviz_contrib(pca_spotify_scaled, choice="var", axes = 2)
+
+fviz_pca_var(pca_spotify_scaled, repel = TRUE, alpha.var = 0.5)
+cor(spotify_for_pca)
+
+# how to improve on their analysis?
+# I would inspect which elements of the PC1 and PC2 are actually contributing to the variance
+fviz_contrib(pca_spotify, choice="var", axes = 1)
+fviz_contrib(pca_spotify, choice="var", axes = 2)
+# it seems like in both dimensions, there is only one main component that contributes to the variance of the factor
+# so what if we leave only those two in? Meaning, tempo and duration
+spotify_for_pca_2 <- select(spotify_cleaned, - "...1", -"Track Name", -"Artist",-"Streams", -"danceability", -"energy", -"key", -"loudness", -"mode", -"speechiness", -"acousticness", -"instrumentalness", -"liveness", -"valence", -"time_signature")
+pca_spotify_2 <- prcomp(spotify_for_pca_2)
+summary(pca_spotify_2)
+fviz_pca_var(pca_spotify_2, repel = TRUE, alpha.var = 0.5)
+# well, it seems Alasdair was right
+
+spotify_for_pca_2 <- select(spotify_cleaned, - "...1", -"Track Name", -"Artist",-"Streams", -"danceability", -"energy", -"key", -"loudness", -"mode", -"speechiness", -"acousticness", -"instrumentalness", -"liveness", -"valence", -"tempo", -"time_signature", -"duration_sec")

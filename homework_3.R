@@ -77,5 +77,13 @@ pca_spotify_2 <- prcomp(spotify_for_pca_2)
 summary(pca_spotify_2)
 fviz_pca_var(pca_spotify_2, repel = TRUE, alpha.var = 0.5)
 # well, it seems Alasdair was right
+# but what if we scale it too
+pca_spotify_2_scaled <- prcomp(spotify_for_pca_2, scale = TRUE)
+summary(pca_spotify_2_scaled)
+fviz_pca_var(pca_spotify_2_scaled, repel = TRUE, alpha.var = 0.5)
+
+# we can see that the tempo and duration are still significant factors here
+
+
 
 spotify_for_pca_2 <- select(spotify_cleaned, - "...1", -"Track Name", -"Artist",-"Streams", -"danceability", -"energy", -"key", -"loudness", -"mode", -"speechiness", -"acousticness", -"instrumentalness", -"liveness", -"valence", -"tempo", -"time_signature", -"duration_sec")

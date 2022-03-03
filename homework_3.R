@@ -29,20 +29,19 @@ typeof(stroop_filtered$rt)
 is.numeric(stroop_filtered$rt)
 
 
-# Now that is done, we might want to drop the trials that had NA
-nrow(d)
-no_missing_vals <- drop_na(d)
-nrow(no_missing_vals)
+# Now that is done, we might want to drop the trials that had NA in
+nrow(stroop_filtered)
+stroop_no_na <- drop_na(stroop_filtered)
+nrow(stroop_no_na)
 
 
-# there is also a practice condition which might need to be included?
-# what is the baseline congruency?
-# anyway, analysis
-# let's first create the means for all the participants
-means <- aggregate(stroop_filtered$rt,
-                         by = list(stroop_filtered$subject, stroop_filtered$phase,
-                                   stroop_filtered$congruency),
+# and now, analysis
+# let's first create the means for all the conditions
+means <- aggregate(stroop_no_na$rt,
+                         by = list(stroop_no_na$phase,
+                                   stroop_no_na$congruency),
                          FUN = 'mean')
+means
 
 multi_level_model_intercepts <- lmer(y ~ 1 + x + (x|subject), stroop_filtered)
 

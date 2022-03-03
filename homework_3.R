@@ -41,6 +41,7 @@ spotify_cleaned <- read_csv("spotify_cleaned.csv")
 
 # examine the data
 summary(spotify_cleaned)
+glimpse(spotify_cleaned)
 
 # we still need to clear out some data that is not pertinent to the actual characteristics of the songs
 # the data that will be omitted in the PCA are the column number, that is reduntant as r keeps track of that anyway

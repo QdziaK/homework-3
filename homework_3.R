@@ -8,15 +8,25 @@ stroop_d <- read.csv("stroop_standing_data.csv")
 # of the manipulation of sitting vs standing.
 
 # let's examine the data
-summary(stroop_d)
 glimpse(stroop_d)
+summary(stroop_d)
+str(stroop_d)
+typeof(stroop_d$rt)
+stroop_d$rt
+
 
 # We need to clean up the data so they are good for the analysis
-# it feels like something is missing here in the information that we were given because I do not know what the X is for
-# I will drop X and "correct" as it does not denote anything of interest really
-# I can also drop the baseline congruency and practice phase, as these will not be analyzed
-d = subset(stroop_d, select = -c(X, correct))
-stroop_filtered <- filter(d, congruency != "baseline", phase != "practice")
+# I will drop the X and correct columns as it does not denote anything of interest for the analysis.
+# I can also drop the baseline congruency and practice phase, as these will not be analyzed.
+# Additionally, for some reason the rt column contains "FALSE" values, so that will need to be filtered as well. It is also apparently a character .
+
+stroop_filtered <- stroop_d %>%
+  subset(select = -c(X, correct)) %>%
+  filter(congruency != "baseline", phase != "practice", rt != "FALSE")  %>%
+  transform(rt = as.numeric(rt))
+
+typeof(stroop_filtered$rt)
+is.numeric(stroop_filtered$rt)
 
 
 # Now that is done, we might want to drop the trials that had NA
@@ -24,20 +34,17 @@ nrow(d)
 no_missing_vals <- drop_na(d)
 nrow(no_missing_vals)
 
-df = subset(stroop_d, drop = rt == "FALSE")
-?drop
-dropped <- drop(stroop_d$rt == "FALSE")
 
 # there is also a practice condition which might need to be included?
 # what is the baseline congruency?
 # anyway, analysis
 # let's first create the means for all the participants
-means <- aggregate(stroop_d$rt,
-                         by = list(stroop_d$subject, stroop_d$phase,
-                                   stroop_d$congruency),
+means <- aggregate(stroop_filtered$rt,
+                         by = list(stroop_filtered$subject, stroop_filtered$phase,
+                                   stroop_filtered$congruency),
                          FUN = 'mean')
 
-multi_level_model_intercepts <- lmer(y ~ 1 + x + (x|subject), stroop_d)
+multi_level_model_intercepts <- lmer(y ~ 1 + x + (x|subject), stroop_filtered)
 
 # 3 
 # load the data

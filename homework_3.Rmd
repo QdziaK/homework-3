@@ -22,12 +22,14 @@ knitr::opts_chunk$set(echo = TRUE)
 * spotify_cleaned.csv
 
 ```{r include=FALSE}
+options(scipen = 5, digits = 3)
 library(tidyverse)
 library(lme4)
 stroop_d <- read.csv("stroop_standing_data.csv")
 library(readr)
 library(factoextra)
 spotify_cleaned <- read_csv("spotify_cleaned.csv")
+library(ggrepel)
 ```
 
 # 2 Stroop, standing up or sitting down
@@ -58,13 +60,12 @@ factoextra::fviz_eig(pca_spotify)
 
 We can see that we replicated the PCA results from the initial analysis of Pratham Nawal. PC1 explains around 64% of the variance in the data, and PC2 explains 35% of the variance.
 
- {r include = FALSE}
-factoextra::fviz_eig(pca_spotify)
-fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5)
+```{r PCA12 plot, warning=FALSE, echo = FALSE}
+fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5) 
+```
+It seems like tempo and duratioin are the most prominent factors of the whole analysis.
+
 cor(spotify_for_pca)
-
-
-
 
 #but what happens if we scale it?
 pca_spotify_scaled <- prcomp(spotify_for_pca, scale = TRUE)
@@ -93,20 +94,3 @@ summary(pca_spotify_2_scaled)
 fviz_pca_var(pca_spotify_2_scaled, repel = TRUE, alpha.var = 0.5)
 
 # we can see that the tempo and duration are still significant factors here
-
-
-
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

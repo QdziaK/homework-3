@@ -1,5 +1,5 @@
 # Homework 3
-
+options(scipen = 5, digits = 3)
 library(tidyverse)
 library(lme4)
 stroop_d <- read.csv("stroop_standing_data.csv")
@@ -9,14 +9,21 @@ stroop_d <- read.csv("stroop_standing_data.csv")
 
 # let's examine the data
 summary(stroop_d)
+glimpse(stroop_d)
 
 # We need to clean up the data so they are good for the analysis
 # it feels like something is missing here in the information that we were given because I do not know what the X is for
-# I will drop X as it does not denote anything of interest really
-d = subset(stroop_d, select = -c(X))
+# I will drop X and "correct" as it does not denote anything of interest really
+# I can also drop the baseline congruency and practice phase, as these will not be analyzed
+d = subset(stroop_d, select = -c(X, correct))
+stroop_filtered <- filter(d, congruency != "baseline", phase != "practice")
+
+
 # Now that is done, we might want to drop the trials that had NA
 nrow(d)
 no_missing_vals <- drop_na(d)
+nrow(no_missing_vals)
+
 df = subset(stroop_d, drop = rt == "FALSE")
 ?drop
 dropped <- drop(stroop_d$rt == "FALSE")
@@ -38,6 +45,7 @@ library(readr)
 install.packages("factoextra")
 library(factoextra)
 spotify_cleaned <- read_csv("spotify_cleaned.csv")
+library(ggrepel)
 
 # examine the data
 summary(spotify_cleaned)
@@ -53,7 +61,11 @@ factoextra::fviz_eig(pca_spotify)
 # we can see that we replicated the PCA results from the initial analysis of Pratham Nawal
 # PC1 explains 64% of the data, and PC2 explains 35% of the data.
 
-fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5)
+fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5) +
+  geom_text_repel(box.padding = 0.5, max.overlaps = Inf)
+
+
+
 cor(spotify_for_pca)
 
 

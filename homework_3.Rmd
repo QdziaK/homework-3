@@ -11,11 +11,15 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Required libraries:
+# Required R packages:
 * tidyverse
 * lme4
 * readr
 * factoextra
+
+# Required files:
+* stroop_standing_data.csv
+* spotify_cleaned.csv
 
 ```{r include=FALSE}
 library(tidyverse)
@@ -33,21 +37,33 @@ In order to analyze the data for the Stroop task.
 # 3 The Dimensions of Popular Music
 We will start attempting to replicate the results obtained by Pratham Nawal by examining the data.
 
-```{r}
+```{r glimpse into spotify}
 glimpse(spotify_cleaned)
 ```
 
 It's apparent that we still need to clear out some data that is not pertinent to the actual characteristics of the songs. The data that will be omitted in the PCA are the column number (it is redundant as r keeps track of that anyway), the track name, the artist and the number of streams.
 
+``` {r include = FALSE}
 spotify_for_pca <- select(spotify_cleaned, - "...1", -"Track Name", -"Artist",-"Streams")
 pca_spotify <- prcomp(spotify_for_pca)
-summary(pca_spotify)
-factoextra::fviz_eig(pca_spotify)
-# we can see that we replicated the PCA results from the initial analysis of Pratham Nawal
-# PC1 explains 64% of the data, and PC2 explains 35% of the data.
+```
 
+``` {r spotify PCA}
+summary(pca_spotify)
+```
+
+```{r PCA scree plot, echo=FALSE}
+factoextra::fviz_eig(pca_spotify)
+```
+
+We can see that we replicated the PCA results from the initial analysis of Pratham Nawal. PC1 explains around 64% of the variance in the data, and PC2 explains 35% of the variance.
+
+ {r include = FALSE}
+factoextra::fviz_eig(pca_spotify)
 fviz_pca_var(pca_spotify, repel = TRUE, alpha.var = 0.5)
 cor(spotify_for_pca)
+
+
 
 
 #but what happens if we scale it?

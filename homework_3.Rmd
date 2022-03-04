@@ -34,7 +34,57 @@ library(ggrepel)
 
 # 2 Stroop, standing up or sitting down
 
-In order to analyze the data for the Stroop task. 
+The analysis will be conducted on this within subjects, 2 (data type: congruent vs incongruent) x2 (phase: standing vs sitting) design.
+
+Let's examine the data
+
+```{r stroop.data.glimpse, echo=FALSE}
+str(stroop_d)
+```
+
+
+```{r include=FALSE}
+summary(stroop_d)
+typeof(stroop_d$rt)
+stroop_d$rt
+```
+
+We need to clean up the data so they are suitable for the analysis
+I will drop the X and correct columns as it does not denote anything of interest for the analysis. I can also drop the baseline congruency and practice phase, as these will not be analyzed.
+Additionally, for some reason the rt column contains "FALSE" values, so that will need to be filtered as well. It is also apparently a character variable.
+
+```{r stoop_filtered, include=FALSE}
+stroop_filtered <- stroop_d %>%
+  subset(select = -c(X, correct)) %>%
+  filter(congruency != "baseline", phase != "practice", rt != "FALSE")  %>%
+  transform(rt = as.numeric(rt))
+
+typeof(stroop_filtered$rt)
+is.numeric(stroop_filtered$rt)
+```
+
+After that is done, we might want to drop the trials that had missing values.
+
+```{r include=FALSE}
+nrow(stroop_filtered)
+stroop_no_na <- drop_na(stroop_filtered)
+nrow(stroop_no_na)
+# The number of rows is smaller, so it's a good thing we did that
+```
+
+## Analysis
+Let's first view the means for all the conditions, to see if the data works well.
+
+```{r include=FALSE}
+stroop_means <- aggregate(stroop_no_na$rt,
+                         by = list(stroop_no_na$phase,
+                                   stroop_no_na$congruency),
+                         FUN = 'mean')
+```
+
+```{r echo=FALSE}
+stroop_means
+```
 
 # 3 The Dimensions of Popular Music
 We will start attempting to replicate the results obtained by Pratham Nawal by examining the data.

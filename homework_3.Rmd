@@ -84,6 +84,7 @@ fviz_contrib(pca_spotify_scaled, choice="var", axes = 1)
 fviz_contrib(pca_spotify_scaled, choice="var", axes = 2)
 fviz_pca_var(pca_spotify_scaled, repel = TRUE, alpha.var = 0.5)
 ```
+
 Upon examination of the contributors to PC1, we can see that it is no longer dependent on duration, and PC2 is no longer purely about tempo.
 Now PC1 comprises mainly of loudness, energy, valence, danceability, and time signature. I do not know much about music or music theory but these variables, as explained on the spotify website, seem to all pertain to the sensory experiences of the songs. How cheerful and euphoric a song is, or in other words, how nice would it be to dance to it.
 In PC2 the most important components were acousticness, tempo, energy, and, to a smaller extent, duration. These factors are more related to the attributes of the song that are not as directly connected to how the music feels to listen to, as it was with PC1. Instead these pertain more to the, so to speak, practical aspects of the songs.

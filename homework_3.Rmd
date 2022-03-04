@@ -1,6 +1,6 @@
 ---
 title: "Homework 3"
-author: '2101377'
+author: 'Registration number:2101377'
 date: "04/03/2022"
 output:
   html_document: default
@@ -71,13 +71,21 @@ It seems like tempo and duration are the most prominent factors of this whole an
 
 So what happens if we normalize the variables? That would allow us to compare the other aspects of the songs in a more nuanced manner. 
 
-``` {r scaled, echo = FALSE} 
+``` {r scaled examine}
 pca_spotify_scaled <- prcomp(spotify_for_pca, scale = TRUE)
 summary(pca_spotify_scaled)
+```
+
+From further investigation after normalizing the data, it seems that the variance is more spread out across the principal components. PC1 explains only about 19% of the variance in the data, with PC2 explaining around 12%. This is in a stark contrast to what can be seen in hte previous analysis. 
+
+``` {r scaled, echo = FALSE} 
 factoextra::fviz_eig(pca_spotify_scaled)
 fviz_contrib(pca_spotify_scaled, choice="var", axes = 1)
 fviz_contrib(pca_spotify_scaled, choice="var", axes = 2)
 fviz_pca_var(pca_spotify_scaled, repel = TRUE, alpha.var = 0.5)
 ```
-
-
+Upon examination of the contributors to PC1, we can see that it is no longer dependent on duration, and PC2 is no longer purely about tempo.
+Now PC1 comprises mainly of loudness, energy, valence, danceability, and time signature. I do not know much about music or music theory but these variables, as explained on the spotify website, seem to all pertain to the sensory experiences of the songs. How cheerful and euphoric a song is, or in other words, how nice would it be to dance to it.
+In PC2 the most important components were acousticness, tempo, energy, and, to a smaller extent, duration. These factors are more related to the attributes of the song that are not as directly connected to how the music feels to listen to, as it was with PC1. Instead these pertain more to the, so to speak, practical aspects of the songs.
+Together, these two components explain about 31% of the variance int he data. I will not go into detail examining the other components, because any further examination of the components that each explain 10% or less of the variance does not feel necessary to me.
+Overall, the findings of this principal component analysis suggest that the popularity of a pop song depends on many factors. While these factors and all the ways they are interconnected with each other could be explained and listed, we can focus for now on the two components that explain the most of the variance. PC1 and PC2 together represent the feelings one can experience, and the technical aspects of the song. 

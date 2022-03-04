@@ -4,11 +4,9 @@ library(tidyverse)
 library(lme4)
 stroop_d <- read.csv("stroop_standing_data.csv")
 
-# A within subjects 3 (data type: practice vs congruent vs incongruent) x2 (position: standing vs sitting) Anova can be conducted to analyze whether there is an effect
-# of the manipulation of sitting vs standing.
+# The analysis will be conducted on this within subjects, 2 (data type: congruent vs incongruent) x2 (phase: standing vs sitting) design.
 
 # let's examine the data
-glimpse(stroop_d)
 summary(stroop_d)
 str(stroop_d)
 typeof(stroop_d$rt)
@@ -36,14 +34,38 @@ nrow(stroop_no_na)
 
 
 # and now, analysis
-# let's first create the means for all the conditions
-means <- aggregate(stroop_no_na$rt,
+# let's first create the means for all the conditions, to see if the data works well
+stroop_means <- aggregate(stroop_no_na$rt,
                          by = list(stroop_no_na$phase,
                                    stroop_no_na$congruency),
                          FUN = 'mean')
-means
+stroop_means
 
-multi_level_model_intercepts <- lmer(y ~ 1 + x + (x|subject), stroop_filtered)
+ggplot(stroop_no_na) +
+  aes(x = phase, y = rt) +
+  geom_boxplot() +
+  facet_wrap(~congruency)
+
+
+# Now to the analysis
+str(stroop_no_na)
+
+# We have reaction time as the dependent variable.
+# As fixed effects, there is phase (standing vs sitting), and there is congruency (congruent vs incongruent)
+# And then there are the subjects, which are the random effects.
+# We want to model the effect of phase and congruency on the reaction time, and we want to see if there is an interaction between phase and congruency.
+# Also, we would want a intercept and slope for each subject that varies by the conditions.
+stroop_model <- lmer(rt ~ phase * congruency + (1|subject) + (1|phase:subject) + (1|congruency:subject), stroop_no_na)
+summary(stroop_model)
+
+# We have fit the model but I am not entirely sure how to analyze the results.
+
+
+
+model <- aov(rt ~ phase *congruency, data = stroop_no_na)
+summary(model)
+
+
 
 # 3 
 # load the data

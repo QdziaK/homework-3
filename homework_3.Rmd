@@ -84,7 +84,33 @@ stroop_means <- aggregate(stroop_no_na$rt,
 
 ```{r echo=FALSE}
 stroop_means
+ggplot(stroop_no_na) +
+  aes(x = phase, y = rt) +
+  geom_boxplot() +
+  facet_wrap(~congruency)
 ```
+
+All seems well, now to analyze.
+
+```{r include=FALSE}
+str(stroop_no_na)
+```
+We have reaction time as the dependent variable.
+As fixed effects, there is phase (standing vs sitting), and there is congruency (congruent vs incongruent)
+And then there are the subjects, which are the random effects.
+We want to model the effect of phase and congruency on the reaction time, and we want to see if there is an interaction between phase and congruency.
+Also, we would want a intercept and slope for each subject that varies by the conditions.
+Hence, our model will look like this:
+
+```{r echo=FALSE}
+stroop_model <- lmer(rt ~ phase * congruency + (1|subject) + (1|phase:subject) + (1|congruency:subject), stroop_no_na)
+summary(stroop_model)
+```
+
+We have fit the model but I am not entirely sure how to analyze the results.
+There seems to be an interaction between the phase and congruency factors based on the fixed effects intercept.
+
+Looking at the means of the the groups, I would conclude that this study was not able to replicate the findings of the previous study and directly contradicts it. A smaller Stroop effect was found when participants were sitting, rather than standing.
 
 # 3 The Dimensions of Popular Music
 We will start attempting to replicate the results obtained by Pratham Nawal by examining the data.
